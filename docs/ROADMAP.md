@@ -38,21 +38,27 @@ Goal: a library and a small CLI (`repo-safety scan <path-or-zip>`) that prints a
 - [x] Benign fixtures that must produce no findings
 
 ## Phase 2: More rules and accuracy
-- [ ] Python: `setup.py` running commands, `pyproject.toml` build hooks
-- [ ] `Makefile`, shell scripts, Terraform: download-and-run patterns
-- [ ] JetBrains `.idea/` run configurations
-- [ ] Obfuscation: very long lines, base64/hex blobs, high-entropy strings
-- [ ] `eval` / `new Function` / `exec` / `child_process` on decoded or remote data (AST-based with Tree-sitter)
-- [ ] Suspicious dependencies: typosquats, non-existent packages, Git URL dependencies
-- [ ] False-positive pass: scan ~50 popular legitimate repos and tune rules
-- [ ] Performance: typical repo scans in under 30 seconds (today: express 0.2s, vite 1.2s, react 2.7s, TypeScript repo with 68k files 21s; next step is to read only files a rule needs)
+- [x] Python: `setup.py` running commands, `pyproject.toml` in-tree build backends, executable `.pth` files
+- [x] `Makefile`, shell scripts, Dockerfiles, PowerShell: download-and-run patterns
+- [x] Terraform: `data "external"` (runs on plan) and `local-exec`
+- [x] JetBrains `.idea/` startup tasks
+- [x] Obfuscation: code hidden off-screen, encoded blobs next to a decoder, packed lines with obfuscator fingerprints
+- [x] `eval` / `new Function` / `exec` on decoded or downloaded data (line-based; string literals ignored)
+- [ ] Same check with real ASTs (Tree-sitter) to follow data across lines
+- [x] Suspicious dependencies: typosquats of popular npm/PyPI names, Git/URL dependencies, unofficial package indexes
+- [ ] Non-existent or brand-new packages (needs registry lookups, see Phase 6)
+- [x] False-positive pass on 21 popular repos (results below)
+- [x] Performance: typical repo scans in under 30 seconds
+
+**False-positive pass (shallow clones, Nov 2026):** express, lodash, axios, flask, requests, django, fastapi, numpy, pandas, eslint, prettier, vite, nest, vue core, tailwindcss, terraform-aws-vpc and the TypeScript repo (68k files, 12s) all come out **Safe**. react, svelte, webpack and vscode come out **Suspicious**, never Dangerous, for real install scripts, a nested folder-open task, a privileged dev container and WebAssembly blobs that are decoded at runtime. Most scans take 0.1 to 2 seconds.
 
 ## Phase 3: VS Code extension (`apps/vscode`)
-- [ ] Declare support for untrusted workspaces so it runs in Restricted Mode
-- [ ] Scan the opened folder automatically and warn before the user trusts it
-- [ ] Show findings in the Problems panel with clickable file/line
-- [ ] "Scan this folder" command and a status bar verdict
-- [ ] Publish to the VS Code Marketplace
+- [x] Declare support for untrusted workspaces so it runs in Restricted Mode
+- [x] Scan untrusted folders automatically and warn before the user trusts them
+- [x] Show findings in the Problems panel with clickable file/line
+- [x] Commands: scan workspace, scan a folder without opening it, scan a ZIP, show report; status bar verdict
+- [ ] Integration tests with `@vscode/test-electron`
+- [ ] Icon, marketplace listing, publish to the VS Code Marketplace and Open VSX
 
 ## Phase 4: Web app (`apps/web`)
 - [ ] Fastify API: `POST /scans` (repo URL or ZIP upload), `GET /scans/:id`

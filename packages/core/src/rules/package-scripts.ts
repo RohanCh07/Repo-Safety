@@ -1,11 +1,11 @@
 import type { Finding, Rule } from "../types.js";
-import { isObject, isVendored, locate, parseJsonc, quote, riskyCommandReasons } from "./util.js";
+import { isObject, isVendored, locate, parseJsonc, quote, riskyCommandReasons, strongRiskReasons, TEST_PATH } from "./util.js";
 
 /** Scripts npm, yarn and pnpm run by themselves during `install`. */
 const INSTALL_HOOKS = ["preinstall", "install", "postinstall", "preprepare", "prepare", "postprepare"];
 
 /** Common, harmless install-time scripts that should not raise alarms. */
-const KNOWN_BENIGN = /^\s*(husky(\s+install)?|husky\s+\S+|patch-package|node-gyp\s+rebuild|prebuild-install(\s|$)|tsc(\s|$)|(npm|pnpm|yarn)\s+(run\s+)?build|npx\s+only-allow\s+[\w-]+|ngcc|lefthook\s+install|simple-git-hooks|is-ci\s*\|\|\s*husky(\s+install)?|svelte-kit\s+sync|nuxt\s+prepare|panda\s+codegen|prisma\s+generate)\s*$/i;
+const KNOWN_BENIGN = /^\s*(husky(\s+install)?|husky\s+\S+|patch-package(\s+--?[\w-]+(\s+\w+)?)*|opencollective(-postinstall)?(\s+postinstall)?|node-gyp\s+rebuild|prebuild-install(\s|$)|tsc(\s|$)|(npm|pnpm|yarn)\s+(run\s+)?build|npx\s+only-allow\s+[\w-]+|ngcc|lefthook\s+install|simple-git-hooks|is-ci\s*\|\|\s*husky(\s+install)?|svelte-kit\s+sync|nuxt\s+prepare|panda\s+codegen|prisma\s+generate)\s*$/i;
 
 /**
  * package.json lifecycle scripts run automatically on `npm install`.
@@ -19,7 +19,7 @@ export const packageScriptsRule: Rule = {
   check(ctx) {
     const findings: Finding[] = [];
     for (const file of ctx.files) {
-      if (isVendored(file.path) || !/(^|\/)package\.json$/.test(file.path)) continue;
+      if (isVendored(file.path) || TEST_PATH.test(file.path) || !/(^|\/)package\.json$/.test(file.path)) continue;
       const doc = parseJsonc(file);
       if (!doc || !isObject(doc.value) || !isObject(doc.value["scripts"])) continue;
       const scripts = doc.value["scripts"];
@@ -50,7 +50,7 @@ export const packageScriptsRule: Rule = {
             file: file.path,
             ...where,
           });
-        } else if (reasons.length) {
+        } else if (strongRiskReasons(command).length) {
           findings.push({
             ruleId: "npm-lifecycle-script",
             severity: "suspicious",

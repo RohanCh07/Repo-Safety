@@ -1,5 +1,90 @@
 {
-  "name": "@repo-safety/vscode",
-  "version": "0.0.0",
-  "private": true
+  "name": "repo-safety-vscode",
+  "displayName": "Repo-Safety: Is This Repo Safe?",
+  "description": "Checks untrusted folders for auto-run traps (VS Code tasks, install scripts, git hooks, hidden code) before you trust them.",
+  "version": "0.1.0",
+  "publisher": "rohanch07",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RohanCh07/Repo-Safety"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "security",
+    "malware",
+    "workspace trust",
+    "take-home",
+    "interview"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": false
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "repoSafety.scanWorkspace",
+        "title": "Scan This Workspace",
+        "category": "Repo-Safety"
+      },
+      {
+        "command": "repoSafety.scanFolder",
+        "title": "Scan a Folder Without Opening It…",
+        "category": "Repo-Safety"
+      },
+      {
+        "command": "repoSafety.scanZip",
+        "title": "Scan a ZIP File…",
+        "category": "Repo-Safety"
+      },
+      {
+        "command": "repoSafety.showReport",
+        "title": "Show Last Report",
+        "category": "Repo-Safety"
+      }
+    ],
+    "configuration": {
+      "title": "Repo-Safety",
+      "properties": {
+        "repoSafety.scanOnOpen": {
+          "type": "string",
+          "enum": [
+            "untrusted",
+            "always",
+            "never"
+          ],
+          "default": "untrusted",
+          "markdownDescription": "When to scan automatically on startup. `untrusted` scans folders that are still in Restricted Mode."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "package": "pnpm build && vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@repo-safety/core": "workspace:*",
+    "@types/node": "^26.6.6",
+    "@types/vscode": "1.90.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
 }

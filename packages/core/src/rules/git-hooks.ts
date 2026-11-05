@@ -24,14 +24,22 @@ export const gitHooksRule: Rule = {
       if (hook) {
         const name = hook[2]!;
         if (name.endsWith(".sample")) continue;
+        // Hooks that git-lfs installs into every clone it touches.
+        if (file.content && /^#!\/bin\/sh\s*\n(command -v git-lfs[^\n]*\n)?[\s\S]{0,300}git lfs (post-checkout|post-commit|post-merge|pre-push) "\$@"\s*$/.test(file.content)) continue;
+        // In an archive, hooks were put there on purpose. In a local folder
+        // they may come from the user's own tools, so they're "suspicious".
+        const fromArchive = ctx.source === "zip";
         const firstLine = file.content ? lineText(file.content, 1) : undefined;
         findings.push({
           ruleId: "git-hooks",
-          severity: "dangerous",
+          severity: fromArchive ? "dangerous" : "suspicious",
           title: `Git hook "${name}" is included`,
           explanation:
-            `This archive contains .git/hooks/${name}. Git runs this script automatically during normal commands ` +
-            `(for example "${hookTrigger(name)}"). Hooks are never copied by git clone, so someone put it there on purpose.`,
+            `${fromArchive ? "This archive contains" : "This folder has"} .git/hooks/${name}. Git runs this script automatically during normal commands ` +
+            `(for example "${hookTrigger(name)}"). ` +
+            (fromArchive
+              ? "Hooks are never copied by git clone, so someone put it there on purpose."
+              : "If you downloaded this folder rather than cloning it yourself, someone put it there on purpose."),
           recommendation: "Delete the .git/hooks folder (or the whole .git folder) before running any git command in this project.",
           file: file.path,
           ...(firstLine ? { line: 1, snippet: firstLine } : {}),

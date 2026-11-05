@@ -1,5 +1,5 @@
 import type { Finding, Rule } from "../types.js";
-import { commandToString, dirname, isObject, isVendored, locate, parseJsonc, quote, riskyCommandReasons, type JsonDoc } from "./util.js";
+import { commandToString, dirname, isObject, isVendored, locate, parseJsonc, quote, riskyCommandReasons, strongRiskReasons, type JsonDoc } from "./util.js";
 
 /**
  * VS Code tasks with `"runOptions": { "runOn": "folderOpen" }` start as soon
@@ -60,7 +60,7 @@ function checkTaskList(doc: JsonDoc, tasks: unknown, path: (string | number)[], 
         file: doc.file.path,
         ...where,
       });
-    } else if (reasons.length) {
+    } else if (strongRiskReasons(command).length) {
       const where = locate(doc, [...path, i, "command"]);
       out.push({
         ruleId: "vscode-autorun-task",

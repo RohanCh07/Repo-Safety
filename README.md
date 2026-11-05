@@ -45,6 +45,10 @@ Repo-Safety/
 
 TypeScript on Node 20+ everywhere, pnpm workspaces, Vitest. Web app: Fastify, BullMQ + Redis, Postgres, S3-compatible storage (MinIO locally), Next.js, Docker Compose. See [docs/ROADMAP.md](docs/ROADMAP.md) for the full plan.
 
+## Scanning this repo itself
+
+Running the scanner on this repository reports **Dangerous**. That is expected: `packages/core/test/fixtures/malicious-like/` holds harmless imitations of every trap so the tests can prove each rule works.
+
 ## Safety rules for contributors
 
 - **Never put real malware in this repo.** Test fixtures only *imitate* trap patterns with harmless commands (for example `echo hello`).

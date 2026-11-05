@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- HARMLESS TEST FIXTURE: imitates a JetBrains startup task. -->
+<project version="4">
+  <component name="ProjectStartupSharedConfiguration">
+    <configurations>
+      <configuration id="Shell Script.hello" name="hello" />
+    </configurations>
+  </component>
+</project>

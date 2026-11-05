@@ -30,7 +30,12 @@ console.log(formatText(report));
 | `vscode-settings-exec` | Settings pointing an interpreter, linter or shell at a file shipped in the repo; `task.allowAutomaticTasks`; terminal env injection (`NODE_OPTIONS`, `LD_PRELOAD`, ...) | dangerous / suspicious |
 | `devcontainer-command` | `initializeCommand` (runs on your machine); risky lifecycle commands; privileged containers; home/credential mounts | dangerous / suspicious |
 | `npm-lifecycle-script` | `preinstall` / `install` / `postinstall` / `prepare` scripts, including risky code in the file they run | dangerous / suspicious |
-| `git-hooks` | Real hooks in `.git/hooks`, exec-capable `.git/config` keys (`fsmonitor`, `hooksPath`, `sshCommand`, `!` aliases), risky husky hooks | dangerous / suspicious |
+| `git-hooks` | Real hooks in `.git/hooks` (dangerous in a ZIP, suspicious in a local folder, git-lfs hooks ignored), exec-capable `.git/config` keys (`fsmonitor`, `hooksPath`, `sshCommand`, `!` aliases), risky husky hooks | dangerous / suspicious |
+| `jetbrains-startup-task` | `.idea` startup tasks that run when a JetBrains IDE opens the project | dangerous |
+| `python-install-hook` | `setup.py` running commands or custom install classes, in-tree `backend-path`, executable `.pth` files | dangerous / suspicious |
+| `build-script-exec` | Download-and-run lines in shell scripts, Makefiles, Dockerfiles, PowerShell; Terraform `data "external"` (runs on plan) and `local-exec` | dangerous / suspicious |
+| `obfuscated-code` | Code hidden off-screen after long runs of spaces, eval/exec on decoded or downloaded data, encoded blobs next to a decoder, packed lines with obfuscator fingerprints | dangerous / suspicious |
+| `suspicious-dependency` | Dependencies from Git/HTTP URLs instead of npm/PyPI, unofficial package indexes, names one typo away from popular packages | suspicious |
 | `symlink-escape` | Symlinks pointing outside the project | suspicious |
 
 Adding a rule: create `src/rules/<name>.ts` exporting a `Rule`, add it to `src/rules/index.ts`, and add a harmless fixture plus a test.

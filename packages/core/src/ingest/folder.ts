@@ -1,3 +1,4 @@
+import { constants } from "node:fs";
 import { lstat, open, readdir, readlink } from "node:fs/promises";
 import path from "node:path";
 import type { ScannedFile } from "../types.js";
@@ -9,6 +10,8 @@ import { decodeText, looksBinary } from "./text.js";
  * Folders that are huge and never hold auto-run config: git's object store
  * and installed dependencies. `.git/hooks` and `.git/config` are still read.
  */
+const READ_CONCURRENCY = 32;
+
 const SKIP_DIRS = /(^|\/)(\.git\/(objects|lfs|logs|refs|modules)|node_modules)$/;
 
 /**
@@ -25,6 +28,7 @@ export async function readFolder(root: string, limits: IngestLimits): Promise<Sc
   let entries = 0;
   let totalBytes = 0;
   const queue: string[] = [""];
+  const pending: { rel: string; abs: string; index: number }[] = [];
 
   while (queue.length > 0) {
     const rel = queue.shift()!;
@@ -50,25 +54,40 @@ export async function readFolder(root: string, limits: IngestLimits): Promise<Sc
       }
       if (!d.isFile()) continue; // sockets, FIFOs, devices: ignore
 
-      const st = await lstat(childAbs);
+      pending.push({ rel: childRel, abs: childAbs, index: files.length });
+      files.push({ path: childRel, size: 0, isBinary: false, isSymlink: false });
+    }
+  }
+
+  // Read file contents in parallel; the walk above only collected paths.
+  let next = 0;
+  const worker = async () => {
+    while (next < pending.length) {
+      const job = pending[next++]!;
+      const st = await lstat(job.abs);
+      if (!st.isFile()) continue;
       if (st.size > limits.maxFileBytes) {
-        files.push({ path: childRel, size: st.size, isBinary: false, isSymlink: false, skipped: "too-large" });
+        files[job.index] = { path: job.rel, size: st.size, isBinary: false, isSymlink: false, skipped: "too-large" };
+        continue;
+      }
+      // Local folders are the user's own disk, so going over budget doesn't
+      // abort: the file is listed but not read. (ZIP uploads still abort.)
+      if (totalBytes + st.size > limits.maxTotalBytes) {
+        files[job.index] = { path: job.rel, size: st.size, isBinary: false, isSymlink: false, skipped: "too-large" };
         continue;
       }
       totalBytes += st.size;
-      if (totalBytes > limits.maxTotalBytes) {
-        throw new IngestError("too-large", `Folder is larger than ${limits.maxTotalBytes} bytes.`);
-      }
-      const buf = await readCapped(childAbs, Math.min(st.size, limits.maxFileBytes));
-      files.push(toScannedFile(childRel, buf));
+      files[job.index] = toScannedFile(job.rel, await readCapped(job.abs, Math.min(st.size, limits.maxFileBytes)));
     }
-  }
+  };
+  await Promise.all(Array.from({ length: READ_CONCURRENCY }, worker));
   return files;
 }
 
 /** Read at most `cap` bytes, even if the file grows while we read it. */
 async function readCapped(file: string, cap: number): Promise<Buffer> {
-  const fh = await open(file, "r");
+  // O_NOFOLLOW: if the file was swapped for a symlink after the walk, refuse to read it.
+  const fh = await open(file, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
   try {
     const buf = Buffer.alloc(cap + 1);
     let offset = 0;

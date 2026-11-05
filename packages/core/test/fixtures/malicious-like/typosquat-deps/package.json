@@ -1,0 +1,10 @@
+{
+  "name": "fixture-typosquat",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "expresss": "^4.0.0",
+    "lodash": "^4.17.21",
+    "helper-lib": "git+https://example.invalid/helper-lib.git"
+  }
+}

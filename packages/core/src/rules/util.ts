@@ -86,22 +86,25 @@ export function isVendored(p: string): boolean {
   return /(^|\/)(node_modules|bower_components|vendor)\//.test(p);
 }
 
+/** Test code and fixtures: not installed or run by a normal setup. */
+export const TEST_PATH = /(^|\/)(tests?|__tests__|spec|specs|testdata|test-data|fixtures?|baselines?|__snapshots__|e2e)\/|\.(spec|test)\.\w+$/i;
+
 /**
  * Command patterns that download, decode or hide code. Matching one of these
  * inside something that runs automatically turns "suspicious" into "dangerous".
  */
-const RISKY_COMMAND_PATTERNS: { re: RegExp; why: string }[] = [
+const RISKY_COMMAND_PATTERNS: { re: RegExp; why: string; weak?: true }[] = [
   { re: /\b(curl|wget|Invoke-WebRequest|iwr|Invoke-RestMethod|irm)\b/i, why: "downloads something from the internet" },
   { re: /\|\s*(ba|z|da)?sh\b|\|\s*(python3?|node|perl|ruby|iex|Invoke-Expression)\b/i, why: "pipes text straight into an interpreter" },
   { re: /\bbase64\b|\batob\s*\(|Buffer\.from\([^)]*['"]base64['"]|FromBase64String|-enc(odedcommand)?\b/i, why: "decodes hidden (base64-encoded) data" },
   { re: /\bnode\s+(-e|--eval|-p|--print)\b|\bpython3?\s+-c\b|\bperl\s+-e\b|\bruby\s+-e\b/i, why: "runs inline code" },
   { re: /\beval\b|new\s+Function\s*\(/, why: "evaluates code built at runtime" },
-  { re: /\bpowershell(\.exe)?\b|\bpwsh\b|\bcmd(\.exe)?\s+\/c\b|\bmshta\b|\brundll32\b|\bregsvr32\b|\bcertutil\b/i, why: "starts a Windows shell or system tool" },
+  { re: /\bpowershell(\.exe)?\b|\bpwsh\b|\bcmd(\.exe)?\s+\/c\b|\bmshta\b|\brundll32\b|\bregsvr32\b|\bcertutil\b/i, why: "starts a Windows shell or system tool", weak: true },
   { re: /\bhttps?:\/\/\d{1,3}(\.\d{1,3}){3}/i, why: "contacts a raw IP address" },
   { re: /\b(pastebin\.com|paste\.ee|hastebin|transfer\.sh|ngrok\.io|ngrok-free\.app|raw\.githubusercontent\.com|gist\.githubusercontent\.com|discord(app)?\.com\/api\/webhooks|api\.telegram\.org)\b/i, why: "contacts a site often used to host payloads" },
-  { re: /\bchmod\s+\+?[0-7]*x|\bchmod\s+[0-7]{3,4}\b/, why: "makes a file executable" },
-  { re: /(^|[;&|\s])(\/tmp\/|%TEMP%|\$env:TEMP|\$TMPDIR)/i, why: "writes to or runs from a temp folder" },
-  { re: /\b(nohup|disown|setsid)\b|&\s*$|\bstart\s+\/b\b/i, why: "runs something in the background" },
+  { re: /\bchmod\s+\+?[0-7]*x|\bchmod\s+[0-7]{3,4}\b/, why: "makes a file executable", weak: true },
+  { re: /(^|[;&|\s])(\/tmp\/|%TEMP%|\$env:TEMP|\$TMPDIR)/i, why: "writes to or runs from a temp folder", weak: true },
+  { re: /\b(nohup|disown|setsid)\b|&\s*$|\bstart\s+\/b\b/i, why: "runs something in the background", weak: true },
 ];
 
 /** Reasons a command line looks risky, empty when it looks ordinary. */
@@ -109,6 +112,15 @@ export function riskyCommandReasons(command: string): string[] {
   const reasons: string[] = [];
   for (const { re, why } of RISKY_COMMAND_PATTERNS) if (re.test(command)) reasons.push(why);
   return reasons;
+}
+
+/**
+ * Like riskyCommandReasons, but empty unless at least one strong signal is
+ * present. Used for things the user starts by hand, to keep noise down.
+ */
+export function strongRiskReasons(command: string): string[] {
+  const strong = RISKY_COMMAND_PATTERNS.some((p) => !p.weak && p.re.test(command));
+  return strong ? riskyCommandReasons(command) : [];
 }
 
 /** Turn a VS Code task / devcontainer command value into one string. */
