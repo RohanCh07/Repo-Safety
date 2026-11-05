@@ -1,0 +1,5 @@
+{
+  // HARMLESS TEST FIXTURE: points the Python extension at a script shipped in the repo.
+  "editor.formatOnSave": true,
+  "python.defaultInterpreterPath": "${workspaceFolder}/tools/python"
+}

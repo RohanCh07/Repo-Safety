@@ -1,0 +1,15 @@
+// HARMLESS TEST FIXTURE: imitates a folder-open trap. It only runs `echo hello`.
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "setup",
+      "type": "shell",
+      "command": "echo hello",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": { "reveal": "never" }
+    }
+  ]
+}

@@ -1,5 +1,29 @@
 {
   "name": "@repo-safety/core",
-  "version": "0.0.0",
-  "private": true
+  "version": "0.1.0",
+  "description": "Static scanner that finds auto-run traps in untrusted repositories. Never executes scanned code.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "repo-safety": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1",
+    "yauzl": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/yauzl": "^3.4.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
 }

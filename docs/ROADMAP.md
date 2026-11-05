@@ -4,36 +4,38 @@ Each phase ends with something that works and can be shown. Later phases build o
 
 ## Phase 0: Project setup
 - [x] Monorepo layout (pnpm workspaces), README, roadmap
-- [ ] TypeScript, ESLint/Prettier and Vitest config
-- [ ] GitHub Actions: install, lint, test on every push
+- [x] TypeScript and Vitest config (`pnpm lint` type-checks)
+- [ ] ESLint/Prettier
+- [x] GitHub Actions: install, lint, test on every push
 
 ## Phase 1: Scanning engine (`packages/core`)
 Goal: a library and a small CLI (`repo-safety scan <path-or-zip>`) that prints a report.
 
 **Safe ingestion**
-- [ ] Read a folder or ZIP into an in-memory file list without executing anything
-- [ ] Limits: total size, file count, per-file size, path depth
-- [ ] Reject zip-slip (`../`, absolute paths) and zip bombs (compression ratio checks)
-- [ ] Skip binary and oversized files, but still record that they exist
+- [x] Read a folder or ZIP into an in-memory file list without executing anything
+- [x] Limits: total size, file count, per-file size, path depth
+- [x] Reject zip-slip (`../`, absolute paths) and zip bombs (compression ratio checks)
+- [x] Skip binary and oversized files, but still record that they exist
 
 **Rule engine**
-- [ ] `Rule` interface: `id`, `title`, `severity`, `check(files) => Finding[]`
-- [ ] `Finding`: rule id, severity, file, line, snippet, plain-English explanation
+- [x] `Rule` interface: `id`, `title`, `severity`, `check(files) => Finding[]`
+- [x] `Finding`: rule id, severity, file, line, snippet, plain-English explanation
 
 **First rules (match real attacks)**
-- [ ] `.vscode/tasks.json` with `runOn: folderOpen`
-- [ ] `.vscode/settings.json` that points to programs to run
-- [ ] `.devcontainer/devcontainer.json` lifecycle commands
-- [ ] `package.json` lifecycle scripts (`preinstall`, `install`, `postinstall`, `prepare`)
-- [ ] `.git/hooks/*` present in an upload
+- [x] `.vscode/tasks.json` with `runOn: folderOpen`
+- [x] `.vscode/settings.json` that points to programs to run
+- [x] `.devcontainer/devcontainer.json` lifecycle commands
+- [x] `package.json` lifecycle scripts (`preinstall`, `install`, `postinstall`, `prepare`)
+- [x] `.git/hooks/*` present in an upload, plus exec-capable `.git/config` keys
+- [x] Symlinks that point outside the project
 
 **Scoring and report**
-- [ ] Severity weights and verdict: any Dangerous → Dangerous; Suspicious findings → Suspicious; else Safe
-- [ ] JSON report + readable terminal output
+- [x] Severity weights and verdict: any Dangerous → Dangerous; Suspicious findings → Suspicious; else Safe
+- [x] JSON report + readable terminal output
 
 **Tests**
-- [ ] Harmless "malicious-like" fixtures for each rule, each must be caught with the right file and line
-- [ ] Benign fixtures that must produce no findings
+- [x] Harmless "malicious-like" fixtures for each rule, each must be caught with the right file and line
+- [x] Benign fixtures that must produce no findings
 
 ## Phase 2: More rules and accuracy
 - [ ] Python: `setup.py` running commands, `pyproject.toml` build hooks
@@ -43,7 +45,7 @@ Goal: a library and a small CLI (`repo-safety scan <path-or-zip>`) that prints a
 - [ ] `eval` / `new Function` / `exec` / `child_process` on decoded or remote data (AST-based with Tree-sitter)
 - [ ] Suspicious dependencies: typosquats, non-existent packages, Git URL dependencies
 - [ ] False-positive pass: scan ~50 popular legitimate repos and tune rules
-- [ ] Performance: typical repo scans in under 30 seconds
+- [ ] Performance: typical repo scans in under 30 seconds (today: express 0.2s, vite 1.2s, react 2.7s, TypeScript repo with 68k files 21s; next step is to read only files a rule needs)
 
 ## Phase 3: VS Code extension (`apps/vscode`)
 - [ ] Declare support for untrusted workspaces so it runs in Restricted Mode

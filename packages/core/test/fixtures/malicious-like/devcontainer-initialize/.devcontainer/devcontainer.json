@@ -1,0 +1,7 @@
+{
+  // HARMLESS TEST FIXTURE: initializeCommand runs on the host. It only echoes.
+  "name": "take-home",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "initializeCommand": "echo hello",
+  "postCreateCommand": "npm ci"
+}

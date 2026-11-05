@@ -1,0 +1,12 @@
+{
+  "name": "plain-node-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "dev": "node --watch src/index.js",
+    "prepare": "husky"
+  },
+  "dependencies": { "express": "^4.19.2" }
+}
