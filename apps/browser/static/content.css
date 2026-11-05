@@ -1,0 +1,14 @@
+.repo-safety-badge {
+  all: initial;
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-left: 8px; padding: 2px 10px; border-radius: 999px;
+  font: 600 12px/20px system-ui, -apple-system, "Segoe UI", sans-serif;
+  border: 1px solid transparent; cursor: pointer; white-space: nowrap; vertical-align: middle;
+  background: #eef0f3; color: #3d4450;
+}
+.repo-safety-badge.floating { position: fixed; right: 16px; bottom: 16px; z-index: 2147483647; box-shadow: 0 2px 10px rgba(0,0,0,.15); font-size: 13px; line-height: 24px; }
+.repo-safety-badge[data-verdict="dangerous"] { background: #fdecec; color: #b3141b; border-color: #f2b8bb; }
+.repo-safety-badge[data-verdict="suspicious"] { background: #fff4dd; color: #8a5300; border-color: #f0d49b; }
+.repo-safety-badge[data-verdict="safe"] { background: #e6f5eb; color: #1a6e37; border-color: #b6e0c3; }
+.repo-safety-badge[data-verdict="error"] { background: #f3f3f3; color: #666; }
+.repo-safety-dot { all: initial; color: inherit; width: 8px; height: 8px; border-radius: 50%; background: currentColor; display: inline-block; }

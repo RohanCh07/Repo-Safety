@@ -75,10 +75,15 @@ Goal: a library and a small CLI (`repo-safety scan <path-or-zip>`) that prints a
 - [ ] Private repos via GitHub OAuth
 
 ## Phase 5: Browser extension (`apps/browser`)
-- [ ] Manifest V3, works in Chrome, Edge and Firefox
-- [ ] Content script adds a risk badge to GitHub repo pages
-- [ ] Background worker calls the web API and caches results
-- [ ] Link from the badge to the full report
+- [x] Manifest V3, loads in Chrome and Edge; Firefox manifest settings included
+- [x] Content script adds a risk badge next to the repo name on GitHub (floating badge if GitHub's markup changes)
+- [x] Background worker calls the web API, polls until the scan finishes, caches for an hour, sets the toolbar badge
+- [x] Click the badge to open the full report
+- [x] Options page for a custom server URL (https only, permission requested at save time)
+- [x] Tested end to end in headless Chromium against the real API (GitHub page and download faked)
+- [ ] Test on live github.com pages and in Firefox
+- [ ] Icons, store listings, publish to Chrome Web Store and Firefox Add-ons
+- [ ] GitLab and Bitbucket pages
 
 ## Phase 6: Later
 - [ ] LLM explanations of findings and second-opinion review of suspicious files

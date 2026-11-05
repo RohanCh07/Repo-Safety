@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Repo-Safety options</title>
+  <style>
+    body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; min-width: 320px; color: #1d1d1b; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; }
+    input { width: 100%; box-sizing: border-box; padding: 8px; font: inherit; }
+    button { margin-top: 10px; padding: 8px 14px; font: inherit; }
+    p { color: #66665f; }
+  </style>
+</head>
+<body>
+  <label for="api">Repo-Safety server</label>
+  <input id="api" type="url" placeholder="http://localhost:8080">
+  <p>Repo names you visit on GitHub are sent to this server to be scanned. Only public repos can be scanned.</p>
+  <button id="save">Save</button> <span id="status"></span>
+  <script src="options.js"></script>
+</body>
+</html>

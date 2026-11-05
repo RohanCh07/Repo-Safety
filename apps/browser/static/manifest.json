@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Repo-Safety: Is This Repo Safe?",
+  "short_name": "Repo-Safety",
+  "version": "0.1.0",
+  "description": "Shows a risk badge on GitHub repos: does this repo hide traps that run code when you open or install it?",
+  "permissions": ["storage"],
+  "host_permissions": ["https://github.com/*", "http://localhost:8080/*"],
+  "optional_host_permissions": ["https://*/*"],
+  "background": { "service_worker": "background.js", "scripts": ["background.js"] },
+  "content_scripts": [
+    { "matches": ["https://github.com/*"], "js": ["content.js"], "css": ["content.css"], "run_at": "document_idle" }
+  ],
+  "options_ui": { "page": "options.html", "open_in_tab": false },
+  "action": { "default_title": "Repo-Safety" },
+  "browser_specific_settings": { "gecko": { "id": "repo-safety@rohanch07", "strict_min_version": "121.0" } }
+}
