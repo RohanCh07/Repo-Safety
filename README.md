@@ -15,6 +15,14 @@ It looks for things like VS Code tasks that run when a folder opens, git hooks h
 | Web app | Paste a link or upload a ZIP and get a shareable report. | `apps/web` |
 | Browser extension | Shows a risk badge on GitHub repo pages. | `apps/browser` |
 
+## Quick start
+
+```bash
+pnpm install && pnpm build
+node packages/core/dist/cli.js scan ./some-take-home-test   # CLI
+REPO_SAFETY_INLINE_WORKER=1 node apps/web/server/dist/api.js  # web app on :8080
+```
+
 ## Repository layout
 
 ```
@@ -34,16 +42,15 @@ Repo-Safety/
 ├── apps/
 │   ├── vscode/            VS Code extension
 │   ├── web/
-│   │   ├── server/        Fastify API
-│   │   ├── worker/        Scan workers (BullMQ queue)
-│   │   └── frontend/      Next.js site
+│   │   ├── server/        Fastify API and BullMQ scan workers
+│   │   └── frontend/      Static HTML/CSS/JS pages
 │   └── browser/           Browser extension (Manifest V3)
 └── .github/workflows/     CI
 ```
 
 ## Tech stack
 
-TypeScript on Node 20+ everywhere, pnpm workspaces, Vitest. Web app: Fastify, BullMQ + Redis, Postgres, S3-compatible storage (MinIO locally), Next.js, Docker Compose. See [docs/ROADMAP.md](docs/ROADMAP.md) for the full plan.
+TypeScript on Node 20+ everywhere, pnpm workspaces, Vitest. Web app: Fastify, BullMQ + Redis, Postgres, S3-compatible storage (MinIO locally), plain HTML/CSS/JS pages, Docker Compose. See [docs/ROADMAP.md](docs/ROADMAP.md) for the full plan.
 
 ## Scanning this repo itself
 

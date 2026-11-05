@@ -1,5 +1,6 @@
 {
   "name": "@repo-safety/web-frontend",
-  "version": "0.0.0",
-  "private": true
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static pages for the Repo-Safety web app, served by @repo-safety/web-server."
 }

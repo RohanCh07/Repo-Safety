@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Repo-Safety</title>
+  <meta name="description" content="Check a take-home coding test or any untrusted repo for hidden auto-run traps before you open it.">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main>
+  <h1>Is this repo safe to open?</h1>
+  <p class="lede">Got a take-home coding test from a recruiter? Paste the link or upload the ZIP. We check it for hidden traps that run code the moment you open or install it, without running any of it.</p>
+
+  <div class="panel">
+    <form id="url-form">
+      <input id="url" type="text" name="url" placeholder="https://github.com/owner/repo" autocomplete="off" required aria-label="Repository link">
+      <button id="url-btn" type="submit">Check repo</button>
+    </form>
+    <p class="or">or upload a ZIP (up to 50 MB)</p>
+    <label class="drop" id="drop" for="file">Drop a .zip here, or click to choose one<input id="file" type="file" accept=".zip,application/zip" hidden></label>
+    <p class="error" id="error" hidden></p>
+  </div>
+
+  <h2>What we look for</h2>
+  <ul class="how">
+    <li>VS Code tasks that run when you open the folder, and settings that start programs from the repo</li>
+    <li>npm, Python and dev container scripts that run on install or setup</li>
+    <li>Git hooks and git config hidden in ZIP downloads</li>
+    <li>Hidden or obfuscated code, and code that downloads more code and runs it</li>
+    <li>Look-alike package names and dependencies pulled from random URLs</li>
+  </ul>
+  <p class="fine">A scan lowers your risk but can't prove a repo is safe. Public GitHub, GitLab and Bitbucket repos only. Uploaded ZIPs are deleted right after scanning; reports are kept for 30 days so you can share them.</p>
+</main>
+<script src="/index.js"></script>
+</body>
+</html>

@@ -61,14 +61,18 @@ Goal: a library and a small CLI (`repo-safety scan <path-or-zip>`) that prints a
 - [ ] Icon, marketplace listing, publish to the VS Code Marketplace and Open VSX
 
 ## Phase 4: Web app (`apps/web`)
-- [ ] Fastify API: `POST /scans` (repo URL or ZIP upload), `GET /scans/:id`
-- [ ] Fetch GitHub/GitLab/Bitbucket repos as archives, never `git clone` with hooks
-- [ ] BullMQ + Redis job queue, scans run in isolated worker processes
-- [ ] Postgres for reports, cached by commit hash
-- [ ] S3-compatible storage for uploads with automatic deletion
-- [ ] Rate limiting and upload abuse protection
-- [ ] Next.js frontend: paste-a-link page and shareable report page
-- [ ] Docker Compose for local development
+- [x] Fastify API: `POST /api/scans` (repo link), `POST /api/scans/upload` (ZIP), `GET /api/scans/:id`, badge endpoint
+- [x] Fetch GitHub/GitLab/Bitbucket repos as archives (never `git clone`), host allowlist on every redirect (no SSRF)
+- [x] BullMQ + Redis job queue, scans run in separate worker processes (inline mode for local dev)
+- [x] Postgres for reports, cached by commit hash and engine version
+- [x] S3-compatible storage for uploads, deleted right after scanning; reports expire after 30 days
+- [x] Rate limiting, upload size caps, strict Content Security Policy
+- [x] Paste-a-link / upload page and shareable report page (plain HTML/CSS/JS instead of Next.js: no build step, nothing to keep patched)
+- [x] Docker Compose for local development (Postgres, Redis, MinIO, API, 2 workers)
+- [x] Tests: 27 API tests plus Postgres and Redis integration tests
+- [ ] Verify the Docker Compose stack end to end (not run yet: no Docker in the build environment)
+- [ ] Deploy (Fly.io / Render / a small VPS) with a domain and HTTPS
+- [ ] Private repos via GitHub OAuth
 
 ## Phase 5: Browser extension (`apps/browser`)
 - [ ] Manifest V3, works in Chrome, Edge and Firefox
